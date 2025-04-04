@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSocket Chat</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .chat-container {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-top: 0;
+    }
+
+    #messages {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      height: 250px;
+      overflow-y: auto;
+      white-space: pre-line;
+      background-color: #f9f9f9;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"] {
+      width: calc(100% - 110px);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 12px;
+      border: none;
+      background-color: #4caf50;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+
+    p {
+      margin: 0.3rem 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container">
+    <h2>WebSocket Chat</h2>
+
+    <div class="button-group">
+      <input type="text" id="messageInput" placeholder="Type a message" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <button onclick="getLastMessages()" style="width: 100%;">Get Last 5 Messages</button>
+
+    <h3>Messages:</h3>
+    <div id="messages"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

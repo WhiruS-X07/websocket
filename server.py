@@ -1,40 +1,57 @@
 import asyncio
 import websockets
+import os
+from http.server import SimpleHTTPRequestHandler
+from socketserver import TCPServer
+import threading
 
 # Store last 5 messages
 last_messages = []
 
-async def handle_connection(websocket):  
+# Serve HTML and JS
+
+
+def start_http_server():
+    os.chdir("public")  # Folder where index.html and script.js are
+    handler = SimpleHTTPRequestHandler
+    httpd = TCPServer(("0.0.0.0", 8000), handler)
+    print("🌐 HTTP server running at http://localhost:8000")
+    httpd.serve_forever()
+
+# Handle WebSocket chat
+
+
+async def handle_connection(websocket):
     global last_messages
     try:
         async for message in websocket:
-            message = message.strip()  # Remove extra spaces/newlines
-
+            message = message.strip()
             if message == "GET_LAST_5":
-                # Send the last 5 messages joined with new lines
-                response = "\n".join(last_messages) if last_messages else "No messages yet."
+                response = "\n".join(
+                    last_messages) if last_messages else "No messages yet."
                 await websocket.send(response)
             else:
-                # Reverse the message
                 reversed_msg = message[::-1]
-
-                # Store the original message (for user view) and reversed message (for server response)
-                last_messages.append(f"You: {message}")  # Store user message
-                last_messages.append(f"Server: {reversed_msg}")  # Store server response
-
-                # Keep only the last 5 messages
-                if len(last_messages) > 10:  # Since each input generates 2 messages
+                last_messages.append(f"You: {message}")
+                last_messages.append(f"Server: {reversed_msg}")
+                if len(last_messages) > 10:
                     last_messages = last_messages[-10:]
-
                 await websocket.send(reversed_msg)
     except websockets.exceptions.ConnectionClosed:
         print("Client disconnected")
 
-# Start WebSocket server
+# Run both servers
+
+
 async def main():
-    async with websockets.serve(handle_connection, "localhost", 8080):  
-        print("✅ WebSocket server running on ws://localhost:8080")
-        await asyncio.Future()  # Keep server running
+    # Start HTTP server in a separate thread
+    http_thread = threading.Thread(target=start_http_server, daemon=True)
+    http_thread.start()
+
+    # Start WebSocket server
+    async with websockets.serve(handle_connection, "0.0.0.0", 8080):
+        print("🧠 WebSocket server running at ws://localhost:8080")
+        await asyncio.Future()
 
 if __name__ == "__main__":
     asyncio.run(main())
